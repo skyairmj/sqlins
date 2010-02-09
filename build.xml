@@ -1,0 +1,134 @@
+<project basedir="." name="SQLinS" default="test" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+    <property name="lib.dir" value="${basedir}/lib"/>
+    <property name="build.lib.dir" value="${lib.dir}/build"/>
+    <property name="test.lib.dir" value="${lib.dir}/test"/>
+    <property name="scala-src.dir" value="${basedir}/src"/>
+    <property name="scala.test.dir" value="${basedir}/test"/>
+    <property name="dist.dir" value="${basedir}/dist"/>
+    <property name="build.dir" value="${basedir}/build"/>
+    <property name="test-reports.dir" value="${build.dir}/reports"/>
+    <property name="compiled.code.dir" value="${build.dir}/compile"/>
+    <property name="release" value="0.1" />
+
+    <path id="ivy.lib.path">
+        <fileset dir="${lib.dir}" includes="*.jar"/>
+    </path>
+    
+    <taskdef resource="org/apache/ivy/ant/antlib.xml"
+    	          uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+
+    <path id="build.classpath">
+        <fileset dir="${build.lib.dir}" includes="*.jar"/>
+    </path>
+
+    <path id="test.classpath">
+        <path refid="build.classpath"/>
+        <fileset dir="${test.lib.dir}" includes="*.jar"/>
+        <fileset dir="${dist.dir}" includes="*.jar"/>
+    </path>
+
+    <path id="scala.classpath">
+        <pathelement location="${build.lib.dir}/scala-compiler.jar"/>
+        <pathelement location="${build.lib.dir}/scala-library.jar"/>
+    </path>
+
+    <taskdef resource="scala/tools/ant/antlib.xml">
+        <classpath refid="scala.classpath"/>
+    </taskdef>
+
+    <macrodef name="compile.and.jar">
+        <attribute name="src"/>
+        <attribute name="dest"/>
+        <attribute name="classpathref"/>
+
+        <sequential>
+            <mkdir dir="${build.dir}/compile"/>
+            <scalac srcdir="@{src}" destdir="${compiled.code.dir}" classpathref="@{classpathref}"/>
+            <jar destfile="@{dest}">
+                <fileset dir="${compiled.code.dir}"/>
+                <fileset dir="@{src}"/>
+            </jar>
+        </sequential>
+    </macrodef>
+
+<macrodef name = "git">
+    <attribute name = "command" />
+    <element name = "args" optional = "true" />
+    <sequential>
+	<echo message = "git @{command}" />
+	<exec executable = "git">
+	    <arg value = "@{command}" />
+	    <args/>
+	</exec>
+    </sequential>
+</macrodef>
+
+<macrodef name = "git-clone-pull">
+    <attribute name = "repository" />
+    <attribute name = "dest" />
+    <sequential>
+	<git command = "clone">
+	    <args>
+		<arg value = "@{repository}" />
+		<arg value = "@{dest}" />
+	    </args>
+	</git>
+	<git command = "pull" dir = "@{dest}" />
+    </sequential>
+</macrodef>
+
+    <target name="clean">
+        <delete dir="${dist.dir}"/>
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="resolve" description="retreive dependencies with ivy">
+        <ivy:retrieve/>
+    </target>
+
+    <target name="build" depends="clean, resolve">
+        <mkdir dir="${dist.dir}"/>
+        <compile.and.jar src="${scala-src.dir}" classpathref="build.classpath"
+                         dest="${dist.dir}/bigvisiblewall-scala.jar"/>
+    </target>
+
+    <target name="dist" depends="test" description="Creates a jar containing the build code and all dependencies">
+        
+    </target>
+
+    <target name="test" depends="build" description="Runs all tests">
+        <compile.and.jar src="${scala.test.dir}" classpathref="test.classpath"
+                         dest="${dist.dir}/scala-test.jar"/>
+
+        <taskdef name="junit"
+                 classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"/>
+
+        <mkdir dir="${test-reports.dir}"/>
+        <junit haltonfailure="true" showoutput="true">
+            <classpath refid="test.classpath"/>
+            <formatter type="xml"/>
+            <formatter type="brief" usefile="false"/>
+            <batchtest fork="yes" todir="${test-reports.dir}">
+                <fileset dir="${compiled.code.dir}">
+                    <include name="**/*Tests.class"/>
+                    <exclude name="**/All*Test.class"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+
+    <target name="commit" description="Runs the tests, commiting the changes to the local git repo">
+        <git command="status">
+        </git>
+
+        <input message="Enter a commit message..." addproperty="commit-message"/>
+        <echo>Commiting ${commit-message}</echo>
+<!--
+        <git command="commit">
+            <arg value="-m ${commit-message}"/>
+        </git>
+-->
+    </target>
+</project>

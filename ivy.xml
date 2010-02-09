@@ -1,0 +1,6 @@
+<ivy-module version="2.0">
+    <info organisation="sqlins" module="sqlins"/>
+    <dependencies>
+        <dependency org="junit" name="junit" rev="4.7"/>
+    </dependencies>
+</ivy-module>
