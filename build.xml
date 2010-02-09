@@ -64,20 +64,6 @@
     </sequential>
 </macrodef>
 
-<macrodef name = "git-clone-pull">
-    <attribute name = "repository" />
-    <attribute name = "dest" />
-    <sequential>
-	<git command = "clone">
-	    <args>
-		<arg value = "@{repository}" />
-		<arg value = "@{dest}" />
-	    </args>
-	</git>
-	<git command = "pull" dir = "@{dest}" />
-    </sequential>
-</macrodef>
-
     <target name="clean">
         <delete dir="${dist.dir}"/>
         <delete dir="${build.dir}"/>
@@ -118,17 +104,28 @@
         </junit>
     </target>
 
-
     <target name="commit" description="Runs the tests, commiting the changes to the local git repo">
         <git command="status">
         </git>
 
+        <input message="Do you want to commit changes?" addproperty="want-to-commit" validargs="y, n" defaultvalue="y"/>
+
+        <condition property="is-to-commit">
+                <equals arg1="${want-to-commit}" arg2="y"/>
+        </condition>
+
+	<antcall target="_commit" />
+    </target>
+
+    <target name="_commit" if="is-to-commit">
         <input message="Enter a commit message..." addproperty="commit-message"/>
         <echo>Commiting ${commit-message}</echo>
-<!--
+
         <git command="commit">
-            <arg value="-m ${commit-message}"/>
-        </git>
--->
+                <args>
+                        <arg value="-a"/>
+                        <arg value="-m ${commit-message}"/>
+                </args>
+        </git>	
     </target>
 </project>
