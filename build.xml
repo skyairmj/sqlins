@@ -1,4 +1,4 @@
-<project basedir="." name="SQLinS" default="test" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="SQLinS" basedir="." default="test" xmlns:ivy="antlib:org.apache.ivy.ant">
 
     <property name="lib.dir" value="${basedir}/lib"/>
     <property name="build.lib.dir" value="${lib.dir}/build"/>
@@ -19,6 +19,7 @@
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
 
     <path id="build.classpath">
+	<path refid="ivy.lib.path"/>
         <fileset dir="${build.lib.dir}" includes="*.jar"/>
     </path>
 
@@ -53,15 +54,15 @@
     </macrodef>
 
     <macrodef name = "git">
-	<attribute name = "command" />
-	<element name = "args" optional = "true" />
-	<sequential>
-	    <echo message = "git @{command}" />
-	    <exec executable = "git">
-		<arg value = "@{command}" />
-		<args/>
-	    </exec>
-	</sequential>
+        <attribute name = "command" />
+        <element name = "args" optional = "true" />
+        <sequential>
+            <echo message = "git @{command}" />
+            <exec executable = "git">
+                <arg value = "@{command}" />
+                <args/>
+            </exec>
+        </sequential>
     </macrodef>
 
     <target name="clean">
@@ -110,7 +111,7 @@
             <equals arg1="${want-to-commit-local}" arg2="y"/>
         </condition>
 
-	<antcall target="_commit_local" />
+        <antcall target="_commit_local" />
     </target>
 
     <target name="_commit_local" if="is-to-commit-local">
@@ -118,27 +119,27 @@
         <echo>Commiting ${commit-message}</echo>
 
         <git command="commit">
-	    <args>
-		<arg value="-a"/>
-		<arg value="-m ${commit-message}"/>
-	    </args>
+            <args>
+                <arg value="-a"/>
+                <arg value="-m ${commit-message}"/>
+            </args>
         </git>
 
-	<input message="Do you want to commit changes to GitHub?" addproperty="want-to-commit-github" validargs="y,n" defaultvalue="y"/>
+        <input message="Do you want to commit changes to GitHub?" addproperty="want-to-commit-github" validargs="y,n" defaultvalue="y"/>
 
         <condition property="is-to-commit-github">
             <equals arg1="${want-to-commit-github}" arg2="y"/>
         </condition>
-	
-	<antcall target="_commit_github" />
+        
+        <antcall target="_commit_github" />
     </target>
     
     <target name="_commit_github" if="is-to-commit-github">
         <git command="push">
-	    <args>
-		<arg value="origin"/>
-		<arg value="master"/>
-	    </args>
+            <args>
+                <arg value="origin"/>
+                <arg value="master"/>
+            </args>
         </git>
     </target>
 </project>

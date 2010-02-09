@@ -2,5 +2,6 @@
     <info organisation="sqlins" module="sqlins"/>
     <dependencies>
         <dependency org="junit" name="junit" rev="4.7" conf="*->*,!sources,!javadoc" />
+        <!--<dependency org="org.scala-tools.testing" name="specs" rev="1.5.0" conf="*->*,!sources,!javadoc" />-->
     </dependencies>
 </ivy-module>
