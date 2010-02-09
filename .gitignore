@@ -1,0 +1,9 @@
+*.svn*
+*.class
+.svnignore
+*.log
+*.kpf
+out/
+build/
+dist/
+

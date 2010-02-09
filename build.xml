@@ -3,6 +3,7 @@
     <property name="lib.dir" value="${basedir}/lib"/>
     <property name="build.lib.dir" value="${lib.dir}/build"/>
     <property name="test.lib.dir" value="${lib.dir}/test"/>
+    <property name="ivy.lib.dir" value="${lib.dir}/ivy"/>
     <property name="scala-src.dir" value="${basedir}/src"/>
     <property name="scala.test.dir" value="${basedir}/test"/>
     <property name="dist.dir" value="${basedir}/dist"/>
@@ -12,11 +13,10 @@
     <property name="release" value="0.1" />
 
     <path id="ivy.lib.path">
-        <fileset dir="${lib.dir}" includes="*.jar"/>
+        <fileset dir="${ivy.lib.dir}" includes="*.jar"/>
     </path>
     
-    <taskdef resource="org/apache/ivy/ant/antlib.xml"
-    	          uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
 
     <path id="build.classpath">
         <fileset dir="${build.lib.dir}" includes="*.jar"/>
@@ -52,17 +52,17 @@
         </sequential>
     </macrodef>
 
-<macrodef name = "git">
-    <attribute name = "command" />
-    <element name = "args" optional = "true" />
-    <sequential>
-	<echo message = "git @{command}" />
-	<exec executable = "git">
-	    <arg value = "@{command}" />
-	    <args/>
-	</exec>
-    </sequential>
-</macrodef>
+    <macrodef name = "git">
+	<attribute name = "command" />
+	<element name = "args" optional = "true" />
+	<sequential>
+	    <echo message = "git @{command}" />
+	    <exec executable = "git">
+		<arg value = "@{command}" />
+		<args/>
+	    </exec>
+	</sequential>
+    </macrodef>
 
     <target name="clean">
         <delete dir="${dist.dir}"/>
@@ -75,8 +75,7 @@
 
     <target name="build" depends="clean, resolve">
         <mkdir dir="${dist.dir}"/>
-        <compile.and.jar src="${scala-src.dir}" classpathref="build.classpath"
-                         dest="${dist.dir}/bigvisiblewall-scala.jar"/>
+        <compile.and.jar src="${scala-src.dir}" classpathref="build.classpath" dest="${dist.dir}/sqlins-scala.jar"/>
     </target>
 
     <target name="dist" depends="test" description="Creates a jar containing the build code and all dependencies">
@@ -84,11 +83,9 @@
     </target>
 
     <target name="test" depends="build" description="Runs all tests">
-        <compile.and.jar src="${scala.test.dir}" classpathref="test.classpath"
-                         dest="${dist.dir}/scala-test.jar"/>
+        <compile.and.jar src="${scala.test.dir}" classpathref="test.classpath" dest="${dist.dir}/sqlins-scala-test.jar"/>
 
-        <taskdef name="junit"
-                 classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"/>
+        <taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"/>
 
         <mkdir dir="${test-reports.dir}"/>
         <junit haltonfailure="true" showoutput="true">
@@ -104,28 +101,44 @@
         </junit>
     </target>
 
-    <target name="commit" description="Runs the tests, commiting the changes to the local git repo">
-        <git command="status">
-        </git>
+    <target name="commit" description="Runs the tests, commiting the changes to the local git repo" depends="test">
+        <git command="status"/>
 
-        <input message="Do you want to commit changes?" addproperty="want-to-commit" validargs="y, n" defaultvalue="y"/>
+        <input message="Do you want to commit changes?" addproperty="want-to-commit-local" validargs="y,n" defaultvalue="y"/>
 
-        <condition property="is-to-commit">
-                <equals arg1="${want-to-commit}" arg2="y"/>
+        <condition property="is-to-commit-local">
+            <equals arg1="${want-to-commit-local}" arg2="y"/>
         </condition>
 
-	<antcall target="_commit" />
+	<antcall target="_commit_local" />
     </target>
 
-    <target name="_commit" if="is-to-commit">
+    <target name="_commit_local" if="is-to-commit-local">
         <input message="Enter a commit message..." addproperty="commit-message"/>
         <echo>Commiting ${commit-message}</echo>
 
         <git command="commit">
-                <args>
-                        <arg value="-a"/>
-                        <arg value="-m ${commit-message}"/>
-                </args>
-        </git>	
+	    <args>
+		<arg value="-a"/>
+		<arg value="-m ${commit-message}"/>
+	    </args>
+        </git>
+
+	<input message="Do you want to commit changes to GitHub?" addproperty="want-to-commit-github" validargs="y,n" defaultvalue="y"/>
+
+        <condition property="is-to-commit-github">
+            <equals arg1="${want-to-commit-github}" arg2="y"/>
+        </condition>
+	
+	<antcall target="_commit_github" />
+    </target>
+    
+    <target name="_commit_github" if="is-to-commit-github">
+        <git command="push">
+	    <args>
+		<arg value="origin"/>
+		<arg value="master"/>
+	    </args>
+        </git>
     </target>
 </project>
