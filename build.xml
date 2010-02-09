@@ -65,16 +65,16 @@
         </sequential>
     </macrodef>
 
+    <target name="resolve" description="retreive dependencies with ivy">
+        <ivy:retrieve/>
+    </target>
+    
     <target name="clean">
         <delete dir="${dist.dir}"/>
         <delete dir="${build.dir}"/>
     </target>
 
-    <target name="resolve" description="retreive dependencies with ivy">
-        <ivy:retrieve/>
-    </target>
-
-    <target name="build" depends="clean, resolve">
+    <target name="build" depends="clean">
         <mkdir dir="${dist.dir}"/>
         <compile.and.jar src="${scala-src.dir}" classpathref="build.classpath" dest="${dist.dir}/sqlins-scala.jar"/>
     </target>

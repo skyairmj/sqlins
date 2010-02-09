@@ -21,9 +21,12 @@ import org.specs.Specification
 
 class SqlTests extends Specification with JUnit {
     "Sql" should {
-    
-        "A Sample Test in Specs" in {
-            "5" must equalTo("5")
+        
+        "select/from/where clauses should be supported" in {
+            val id: Field = "id"
+            val table: Table = "table"
+            val sql = select(id) from table where id > 2
+            sql.toString must equalTo("select id from table where id>2")
         }
     }
 }
