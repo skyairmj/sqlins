@@ -16,33 +16,37 @@
 
 package sqlins
 
-class SQL (manipulation: String){
-    var sql = new StringBuilder
+class Statement{
+}
 
-    def from(table : Table):SQL={
-        sql append " " append "from" append " " append table
+trait FromRequired{
+    def from(table : Table) : WhereRequired
+}
+
+trait WhereRequired{
+    def where(criteria : Criteria) : Statement
+}
+
+class select (fields: Field*) extends Statement with FromRequired with WhereRequired{
+    var sql = new StringBuilder append "select"
+    for(field <- fields) sql append " " append field append ","
+    sql.deleteCharAt(sql.length - 1)
+    
+    def from(table: Table):WhereRequired = {
+        sql append " " append "from" append table
         this
     }
     
-    def where(criteria: Criteria): SQL={
+    def where(criteria : Criteria):Statement = {
         sql append " " append "where" append criteria
         this
     }
-
+    
     override def toString() : String = sql.toString
 }
 
-class select (fields: Field*) extends SQL("select"){
-    override def toString() : String = {
-        var temp = new StringBuilder append "select" append " "
-        for(field <- fields) temp append field append ","
-        temp.deleteCharAt(temp.length - 1) append super.toString
-        return temp.toString
-    } 
-}
-
 object select{
-    def apply (fields: Field*): select = new select (fields: _*)
+    def apply (fields: Field*): FromRequired = new select (fields: _*)
 }
 
 class Criteria(criteria: String){
@@ -74,7 +78,7 @@ object Field{
 }
 
 class Table(name : String){
-    override def toString(): String = name
+    override def toString(): String = " ".concat(name)
 }
 
 object Table{
