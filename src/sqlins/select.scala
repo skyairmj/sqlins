@@ -16,18 +16,24 @@
 
 package sqlins
 
-import org.specs.runner.JUnit
-import org.specs.Specification
-
-class SqlTests extends Specification with JUnit {
-    "Sql" should {
-        
-        "select/from/where clauses should be supported" in {
-            val id: Field = "id"
-            val table: Table = "table"
-            val sql = select(id) from table where id > 2
-            sql.toString must equalTo("select id from table where id>2")
-        }
-        
+class select (fields: Field*) extends Statement with FromRequired with WhereRequired{
+    var sql = new StringBuilder append "select"
+    for(field <- fields) sql append " " append field append ","
+    sql.deleteCharAt(sql.length - 1)
+    
+    def from(table: Table):WhereRequired = {
+        sql append " " append "from" append table
+        this
     }
+    
+    def where(criteria : Criteria):Statement = {
+        sql append " " append "where" append criteria
+        this
+    }
+    
+    override def toString() : String = sql.toString
+}
+
+object select{
+    def apply (fields: Field*): FromRequired = new select (fields: _*)
 }

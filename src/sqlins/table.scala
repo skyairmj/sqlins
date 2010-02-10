@@ -16,18 +16,10 @@
 
 package sqlins
 
-import org.specs.runner.JUnit
-import org.specs.Specification
+class Table(name : String){
+    override def toString(): String = " ".concat(name)
+}
 
-class SqlTests extends Specification with JUnit {
-    "Sql" should {
-        
-        "select/from/where clauses should be supported" in {
-            val id: Field = "id"
-            val table: Table = "table"
-            val sql = select(id) from table where id > 2
-            sql.toString must equalTo("select id from table where id>2")
-        }
-        
-    }
+object Table{
+    implicit def stringToTable(name: String): Table = new Table(name)
 }

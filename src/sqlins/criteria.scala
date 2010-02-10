@@ -16,18 +16,6 @@
 
 package sqlins
 
-import org.specs.runner.JUnit
-import org.specs.Specification
-
-class SqlTests extends Specification with JUnit {
-    "Sql" should {
-        
-        "select/from/where clauses should be supported" in {
-            val id: Field = "id"
-            val table: Table = "table"
-            val sql = select(id) from table where id > 2
-            sql.toString must equalTo("select id from table where id>2")
-        }
-        
-    }
+class Criteria(criteria: String){
+    override def toString() : String = criteria
 }
