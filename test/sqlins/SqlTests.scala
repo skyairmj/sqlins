@@ -21,8 +21,22 @@ import org.specs.Specification
 
 class SqlTests extends Specification with JUnit {
     "Sql" should {
+        "simple (*) query like 'select * from ...' is supported" in {
+            val table : Table = "table"
+            true must beTrue
+            //val sql = select (*) from table
+            //sql.toString must equalTo("select * from table")
+        }
         
-        "simple query as select/from/where clauses should be supported" in {
+        "multiple fields is be able to query" in {
+            val id: Field = "id"
+            val name: Field = "name"
+            val table : Table = "table"
+            val sql = select (id, name) from table
+            sql.toString must equalTo("select id, name from table")
+        }
+        
+        "single criteria in where clause is supported" in {
             val id: Field = "id"
             val table: Table = "table"
             var sql = select (id) from table where id > 2
@@ -33,19 +47,11 @@ class SqlTests extends Specification with JUnit {
             sql.toString must equalTo("select id from table where id<>2")
         }
         
-        "use '=?' instead of '=' in criteria as '=' is reserved by scala" in {
+        "use '_=' rather than '=' as equal in criteria because '=' is reserved by scala" in {
             val id: Field = "id"
             val table: Table = "table"
             var sql = select (id) from table where (id =? 2)
             sql.toString must equalTo("select id from table where id=2")            
-        }
-        
-        "multiple fields should be able to query" in {
-            val id: Field = "id"
-            val name: Field = "name"
-            val table : Table = "table"
-            val sql = select (id, name) from table where id > 2
-            sql.toString must equalTo("select id, name from table where id>2")
         }
         
         "and/or criterias should be support with round brackets" in {
