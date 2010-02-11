@@ -1,0 +1,28 @@
+SQL-Data Statements
+
+SQL-Data Statements perform query and modification on database tables and columns. This subset of SQL is also called the Data Manipulation Language for SQL (SQL DML).
+
+Contents:
+
+* SELECT Statement -- query tables and views in the database
+      o SELECT Statement Basics
+            + SELECT Clause
+            + FROM Clause
+            + WHERE Clause
+      o Extended Query Capabilities
+            + ORDER BY Clause
+            + Value Expressions
+            + Joining Tables
+            + Subqueries
+            + Grouping Queries (GROUP BY)
+            + Aggregate Queries (Set Functions)
+            + Union Queries (UNION)
+* SQL Modification Statements
+      o INSERT Statement -- add rows to tables
+            + VALUES Clause
+      o UPDATE Statement -- modify columns in table rows
+            + SET Clause
+      o DELETE Statement -- remove rows from tables
+      
+      
+Read more: http://www.firstsql.com/tutor1.htm
