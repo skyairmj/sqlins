@@ -22,12 +22,26 @@ import org.specs.Specification
 class SqlTests extends Specification with JUnit {
     "Sql" should {
         
-        "select/from/where clauses should be supported" in {
+        "simple query as select/from/where clauses should be supported" in {
             val id: Field = "id"
             val table: Table = "table"
-            val sql = select(id) from table where id > 2
+            val sql = select (id) from table where id > 2
             sql.toString must equalTo("select id from table where id>2")
         }
         
+        "multiple fields should be able to queried" in {
+            val id: Field = "id"
+            val name: Field = "name"
+            val table : Table = "table"
+            val sql = select (id, name) from table where id > 2
+            sql.toString must equalTo("select id, name from table where id>2")
+        }
+        
+        "and criterions should be support with round brackets" in {
+            val id: Field = "id"
+            val table : Table = "table"
+            val sql = select (id) from table where ((id > 2) and (id < 3))
+            sql.toString must equalTo("select id from table where (id>2 and id<3)")
+        }
     }
 }

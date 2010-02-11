@@ -17,5 +17,8 @@
 package sqlins
 
 class Criteria(criteria: String){
+    def and (criterion: Criteria): Criteria = {
+        new Criteria (" (" concat criteria.substring(1) concat " and" concat criterion.toString concat ")")
+    }
     override def toString() : String = criteria
 }
