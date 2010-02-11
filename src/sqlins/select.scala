@@ -36,4 +36,9 @@ class select (fields: Field*) extends Statement with FromRequired with WhereRequ
 
 object select{
     def apply (fields: Field*): FromRequired = new select (fields: _*)
+    def apply (char : Any): FromRequired = new select(new Field(char.toString))
+}
+
+object *{
+    override def toString() = "*"
 }

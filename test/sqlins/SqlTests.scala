@@ -23,9 +23,8 @@ class SqlTests extends Specification with JUnit {
     "Sql" should {
         "simple (*) query like 'select * from ...' is supported" in {
             val table : Table = "table"
-            true must beTrue
-            //val sql = select (*) from table
-            //sql.toString must equalTo("select * from table")
+            val sql = select (*) from table
+            sql.toString must equalTo("select * from table")
         }
         
         "multiple fields is be able to query" in {
@@ -47,7 +46,7 @@ class SqlTests extends Specification with JUnit {
             sql.toString must equalTo("select id from table where id<>2")
         }
         
-        "use '_=' rather than '=' as equal in criteria because '=' is reserved by scala" in {
+        "use '=?' rather than '=' as equal in criteria because '=' is reserved by scala" in {
             val id: Field = "id"
             val table: Table = "table"
             var sql = select (id) from table where (id =? 2)
