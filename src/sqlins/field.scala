@@ -25,7 +25,7 @@ class Field(name: String){
         new Criteria(" " concat name concat "<" concat value.toString)
     }
 
-    def :=(value : Int): Criteria = {
+    def =?(value : Int): Criteria = {
         new Criteria(" " concat name concat "=" concat value.toString)
     }
 

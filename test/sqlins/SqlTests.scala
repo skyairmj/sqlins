@@ -25,11 +25,22 @@ class SqlTests extends Specification with JUnit {
         "simple query as select/from/where clauses should be supported" in {
             val id: Field = "id"
             val table: Table = "table"
-            val sql = select (id) from table where id > 2
+            var sql = select (id) from table where id > 2
             sql.toString must equalTo("select id from table where id>2")
+            sql = select (id) from table where id < 2
+            sql.toString must equalTo("select id from table where id<2")
+            sql = select (id) from table where id <> 2
+            sql.toString must equalTo("select id from table where id<>2")
         }
         
-        "multiple fields should be able to queried" in {
+        "use '=?' instead of '=' in criteria as '=' is reserved by scala" in {
+            val id: Field = "id"
+            val table: Table = "table"
+            var sql = select (id) from table where (id =? 2)
+            sql.toString must equalTo("select id from table where id=2")            
+        }
+        
+        "multiple fields should be able to query" in {
             val id: Field = "id"
             val name: Field = "name"
             val table : Table = "table"
@@ -37,11 +48,15 @@ class SqlTests extends Specification with JUnit {
             sql.toString must equalTo("select id, name from table where id>2")
         }
         
-        "and criterions should be support with round brackets" in {
+        "and/or criterias should be support with round brackets" in {
             val id: Field = "id"
             val table : Table = "table"
-            val sql = select (id) from table where ((id > 2) and (id < 3))
+            var sql = select (id) from table where ((id > 2) and (id < 3))
             sql.toString must equalTo("select id from table where (id>2 and id<3)")
+            sql = select (id) from table where ((id > 6) or (id < 3))
+            sql.toString must equalTo("select id from table where (id>6 or id<3)")
         }
+        
+        
     }
 }
