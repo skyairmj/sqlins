@@ -16,52 +16,49 @@
 
 package sqlins
 
+import org.specs.matcher.Matcher
 import org.specs.runner.JUnit
 import org.specs.Specification
 
 class SqlTests extends Specification with JUnit {
-    "Sql" should {
+    "pure sql in scala" should {
+        
+        case class equalToSQL(sql: String) extends Matcher[Any]() {
+            def apply(v: => Any) = (v.toString == sql, "okMessage", "koMessage")
+        }
+        
         "simple (*) query like 'select * from ...' is supported" in {
             val table : Table = "table"
-            val sql = select (*) from table
-            sql.toString must equalTo("select * from table")
+            select (*) from table must equalToSQL("select * from table")
         }
         
         "multiple fields is be able to query" in {
             val id: Field = "id"
             val name: Field = "name"
             val table : Table = "table"
-            val sql = select (id, name) from table
-            sql.toString must equalTo("select id, name from table")
+            select (id, name) from table must equalToSQL("select id, name from table")
         }
         
         "single criteria in where clause is supported" in {
             val id: Field = "id"
             val table: Table = "table"
-            var sql = select (id) from table where id > 2
-            sql.toString must equalTo("select id from table where id>2")
-            sql = select (id) from table where id < 2
-            sql.toString must equalTo("select id from table where id<2")
-            sql = select (id) from table where id <> 2
-            sql.toString must equalTo("select id from table where id<>2")
+            select (id) from table where id > 2 must equalToSQL("select id from table where id>2")
+            select (id) from table where id < 2 must equalToSQL("select id from table where id<2")
+            select (id) from table where id <> 2 must equalToSQL("select id from table where id<>2")
         }
         
         "use '=?' rather than '=' as equal in criteria because '=' is reserved by scala" in {
             val id: Field = "id"
             val table: Table = "table"
-            var sql = select (id) from table where (id =? 2)
-            sql.toString must equalTo("select id from table where id=2")            
+            select (id) from table where (id =? 2) must equalToSQL("select id from table where id=2")            
         }
         
         "and/or criterias should be support with round brackets" in {
             val id: Field = "id"
             val table : Table = "table"
-            var sql = select (id) from table where ((id > 2) and (id < 3))
-            sql.toString must equalTo("select id from table where (id>2 and id<3)")
-            sql = select (id) from table where ((id > 6) or (id < 3))
-            sql.toString must equalTo("select id from table where (id>6 or id<3)")
+            val sql = select (id) from table where ((id > 2) and (id < 3))
+            sql must equalToSQL("select id from table where (id>2 and id<3)")
+            select (id) from table where ((id > 6) or (id < 3)) must equalToSQL("select id from table where (id>6 or id<3)")
         }
-        
-        
     }
 }
