@@ -16,15 +16,15 @@
 
 package sqlins
 
-import org.specs.matcher.Matcher
+import org.specs.matcher._
 import org.specs.runner.JUnit
 import org.specs.Specification
 
 class SqlTests extends Specification with JUnit {
     "pure sql in scala" should {
         
-        case class equalToSQL(sql: String) extends Matcher[Any]() {
-            def apply(v: => Any) = (v.toString == sql, "okMessage", "koMessage")
+        case class equalToSQL(sql: String) extends BeEqualTo[Any](sql: String) {
+            override def apply(v: => Any) = super.apply(v.toString)
         }
         
         "simple (*) query like 'select * from ...' is supported" in {

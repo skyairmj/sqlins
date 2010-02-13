@@ -121,19 +121,18 @@
     <target name="commit" description="Runs the tests, commiting the changes to the local git repo" depends="test">
         <git command="status"/>
 
-        <input message="Do you want to commit changes?" addproperty="want-to-commit-local" validargs="y,n" defaultvalue="y"/>
-
-        <condition property="is-to-commit-local">
-            <equals arg1="${want-to-commit-local}" arg2="y"/>
+        <input message="Enter a commit message..." addproperty="commit-message"/>
+        
+        <condition property="ok-to-commit-local">
+            <matches pattern="[\w]+" string="${commit-message}"/>
         </condition>
 
-        <antcall target="_commit_local" />
+        <fail message="You need to write comments!" unless="ok-to-commit-local"/>
+        
+        <antcall target="_commit_local"/>
     </target>
-
-    <target name="_commit_local" if="is-to-commit-local">
-        <input message="Enter a commit message..." addproperty="commit-message"/>
-        <echo>Commiting ${commit-message}</echo>
-
+    
+    <target name="_commit_local" if="ok-to-commit-local">
         <git command="commit">
             <args>
                 <arg value="-a"/>

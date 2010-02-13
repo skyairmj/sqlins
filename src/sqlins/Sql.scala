@@ -26,3 +26,7 @@ trait FromRequired{
 trait WhereRequired{
     def where(criteria : Criteria) : Statement
 }
+
+trait Queriable{
+    
+}
