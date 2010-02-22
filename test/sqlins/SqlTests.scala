@@ -31,11 +31,11 @@ class SqlTests extends Specification with JUnit {
             val table : Table = "table"
             select (*) from table must equalToSQL("select * from table")
         }
-        /*
-        "scalar query like 'select \"happy new year\"' is supported" in {
+        
+        "scalar query with literal value is supported" in {
             select ("Happy Chinese New Year") must equalToSQL("select 'Happy Chinese New Year'")
         }
-        */
+        
         "multiple fields is be able to query" in {
             val id: Field = "id"
             val name: Field = "name"

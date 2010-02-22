@@ -39,6 +39,7 @@ object select{
         new select (fields.map{
             field=>field match {
                 case f: Field => f
+                case s: String => new LiteralField(s)
                 case _ => new Field(field.toString)
             }
         }: _*)

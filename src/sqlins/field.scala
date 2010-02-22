@@ -36,6 +36,10 @@ class Field(name: String){
     override def toString() : String = name
 }
 
+class LiteralField(name: String) extends Field(name){
+    override def toString() : String = "'" concat name concat "'"
+}
+
 object Field{
     implicit def stringToField(field: String): Field = new Field(field)
 }
