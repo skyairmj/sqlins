@@ -35,8 +35,14 @@ class select (fields: Field*) extends Statement with FromRequired with WhereRequ
 }
 
 object select{
-    def apply (fields: Field*): FromRequired = new select (fields: _*)
-    def apply (char: Any): FromRequired = new select(new Field(char.toString))
+    def apply (fields: Any*): FromRequired = {
+        new select (fields.map{
+            field=>field match {
+                case f: Field => f
+                case _ => new Field(field.toString)
+            }
+        }: _*)
+    }
 }
 
 object *{
