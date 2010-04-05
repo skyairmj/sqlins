@@ -64,14 +64,15 @@ class SqlTests extends Specification with JUnit {
             sql must equalToSQL("select id from table where (id>2 and id<3)")
             select (id) from table where ((id > 6) or (id < 3)) must equalToSQL("select id from table where (id>6 or id<3)")
         }
-        
+        /*
         "linq similar style" in {
             val id: Field = "id"
             val person_with_id_greater_than_2 = new Person(3)
-            var dataset = List(new Person(1), person_with_id_greater_than_2)
+            val dataset = List(new Person(1), person_with_id_greater_than_2)
             val sql = select (id) from dataset where (id > 2)
             val expected_result = List(person_with_id_greater_than_2)
             sql.list must be expected_result
         }
+*/
     }
 }

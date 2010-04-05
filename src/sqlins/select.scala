@@ -21,7 +21,7 @@ class select (fields: Field*) extends Statement with FromRequired with WhereRequ
     for(field <- fields) sql append " " append field append ","
     sql.deleteCharAt(sql.length - 1)
     
-    def from(table: Table):WhereRequired = {
+    def from(table: Queriable):WhereRequired = {
         sql append " " append "from" append table
         this
     }

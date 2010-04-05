@@ -20,7 +20,7 @@ class Statement{
 }
 
 trait FromRequired{
-    def from(table : Table) : WhereRequired
+    def from(queriable : Queriable) : WhereRequired
 }
 
 trait WhereRequired{
