@@ -17,6 +17,7 @@
 package sqlins
 
 class Table(name : String) extends Queriable{
+	
     override def toString(): String = " ".concat(name)
 }
 

@@ -7,7 +7,7 @@ COPYRIGHT = ""
 
 require 'buildr/scala'
 
-Buildr.settings.build['scala.version'] = "2.8.0.final"
+Buildr.settings.build['scala.version'] = "2.8.0"
 
 # Specify Maven 2.0 remote repositories here, like this:
 repositories.remote << "http://www.ibiblio.org/maven2/"

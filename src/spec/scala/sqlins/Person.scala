@@ -15,6 +15,6 @@
  */
 package sqlins
 
-class Person(id: int){
+class Person(id: Int){
     val _id = id   
 }

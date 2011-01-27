@@ -28,5 +28,4 @@ trait WhereRequired{
 }
 
 trait Queriable{
-    
 }
