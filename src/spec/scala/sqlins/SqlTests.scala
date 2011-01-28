@@ -23,15 +23,11 @@ import org.specs.specification._
 class SqlTests extends Specification {
 	
     "pure sql in scala" should {
-        
-        case class beSql_(sql: String) extends BeEqualTo[Any](sql: String) {
-            override def apply(v: => Any) = super.apply(v.toString)
-        }
 
 		implicit def toSqlMatcherResult[T](result: Result[T]) = new SqlMatcherResult(result)
 		
 		class SqlMatcherResult[T](result: Result[T]) {
-			def sql_(sql: String) = result.matchWithMatcher(new beSql_(sql))
+			def sql_(sql: String) = result.matchWithMatcher(new BeEqualTo(sql))
 		}
         
         "simple (*) query like 'select * from ...' is supported" in {
